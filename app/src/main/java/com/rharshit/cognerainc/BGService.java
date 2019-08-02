@@ -12,12 +12,23 @@ public class BGService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "onStartJob: Started");
+        Callbacks.processCallback = new Callbacks.processCallback() {
+            @Override
+            public void process(String s) {
+                Callbacks.setCallback.set(processText(s));
+            }
+        };
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Log.d(TAG, "onStopJob: Stopped");
-        return false;
+        Callbacks.processCallback = null;
+        return true;
+    }
+
+    private String processText(String s){
+        return s + "Hello";
     }
 }

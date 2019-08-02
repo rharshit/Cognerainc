@@ -10,6 +10,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     private Context mContext;
     private JobScheduler jobScheduler;
     private JobInfo job;
+
+    private EditText etInput;
 
     private static final int JOB_ID = 1;
 
@@ -29,14 +32,24 @@ public class MainActivity extends AppCompatActivity {
 
         mContext = this;
 
+        etInput = findViewById(R.id.et_input);
+
         jobScheduler = (JobScheduler)getApplicationContext()
                 .getSystemService(JOB_SCHEDULER_SERVICE);
 
         ComponentName componentName = new ComponentName(this,
                 BGService.class);
 
+        Callbacks.setCallback = new Callbacks.setCallback() {
+            @Override
+            public void set(String s) {
+                etInput.setText(s);
+            }
+        };
+
         job = new JobInfo.Builder(JOB_ID, componentName)
-                .setPeriodic(500)
+                .setMinimumLatency(500)
+                .setOverrideDeadline(0)
                 .build();
     }
 
@@ -63,5 +76,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void send(View view) {
+        if(Callbacks.processCallback == null){
+            Toast.makeText(mContext, "Service not running", Toast.LENGTH_SHORT).show();
+        } else {
+            Callbacks.processCallback.process(etInput.getText().toString());
+        }
     }
 }
