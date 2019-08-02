@@ -5,6 +5,8 @@ import android.app.job.JobService;
 import android.util.Log;
 
 import static android.content.ContentValues.TAG;
+import static com.rharshit.cognerainc.Callbacks.processCallback;
+import static com.rharshit.cognerainc.Callbacks.setCallback;
 
 public class BGService extends JobService {
 
@@ -12,10 +14,10 @@ public class BGService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "onStartJob: Started");
-        Callbacks.processCallback = new Callbacks.processCallback() {
+        processCallback = new Callbacks.processCallback() {
             @Override
             public void process(String s) {
-                Callbacks.setCallback.set(processText(s));
+                setCallback.set(processText(s));
             }
         };
         return true;
@@ -24,11 +26,11 @@ public class BGService extends JobService {
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
         Log.d(TAG, "onStopJob: Stopped");
-        Callbacks.processCallback = null;
+        processCallback = null;
         return true;
     }
 
-    private String processText(String s){
+    private String processText(String s) {
         return s + "Hello";
     }
 }
